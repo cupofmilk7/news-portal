@@ -1,6 +1,8 @@
 from django.db import models
 from wagtail.admin.panels import FieldPanel
-from wagtail.fields import RichTextField
+from wagtail.blocks import RichTextBlock
+from wagtail.fields import RichTextField, StreamField
+from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 from modelcluster.fields import ParentalManyToManyField
 
@@ -31,6 +33,28 @@ class NewsPage(Page):
     parent_page_types = ['home.HomePage']
 
     # db
+    subtitle = models.TextField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    body = StreamField(
+        [
+            ('rtfblock', RichTextBlock(
+                features=['h1', 'bold', 'italic', 'link', 'ol', 'ul'],
+                label="Текст"
+            )),
+            ('imgblock', ImageChooserBlock(
+                label="Изображение",
+                help_text="Изображение для страницы"
+            )),
+        ],
+        block_counts={
+            'imgblock': {'max_num': 3},
+        },
+    )
+
     authors = ParentalManyToManyField(
         Author,
         blank=True,
@@ -41,6 +65,7 @@ class NewsPage(Page):
     # user input
     content_panels = Page.content_panels + [
         FieldPanel('authors'),
+        FieldPanel('body')
     ]
 
 

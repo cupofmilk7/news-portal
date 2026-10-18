@@ -1,23 +1,28 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags %}
+{% load wagtailcore_tags %}
 
 {% block content %}
+<div class="container">
+    <section class="hero">
+        <h1>{{ page.title }}</h1>
+        {% if page.subtitle %}<p class="subtitle">{{ page.subtitle }}</p>{% endif %}
+        {% if page.rtfblock %}<div class="intro">{{ page.rtfblock|richtext }}</div>{% endif %}
+    </section>
 
-<div class="body-center">
-    <h1>{{ page.title }}</h1>
-    {% if page.subtitle %}<h2>{{ page.subtitle }}</h2>{% endif %}
-    {% if page.rtfblock %}{{ page.rtfblock|richtext }}{% endif %}
+    <section class="news-section">
+        <h2>Последние новости</h2>
+        <ul class="news-list">
+            {% for news in latest_news %}
+                <li>
+                    <a href="{% pageurl news %}">
+                        <span class="news-title">{{ news.title }}</span>
+                        <time class="news-date">{{ news.first_published_at|date:"d.m.Y" }}</time>
+                    </a>
+                </li>
+            {% empty %}
+                <li class="empty">Новостей пока нет.</li>
+            {% endfor %}
+        </ul>
+    </section>
 </div>
-
-<section class="news-list">
-    <h2>Последние новости</h2>
-    <ul>
-        {% for news in latest_news %}
-            <li><a href="{% pageurl news %}">{{ news.title }}</a></li>
-        {% empty %}
-            <li>Новостей пока нет.</li>
-        {% endfor %}
-    </ul>
-</section>
-
 {% endblock %}

@@ -1,17 +1,29 @@
 {% extends "base.html" %}
-{% load static wagtailcore_tags %}
+{% load wagtailcore_tags %}
 
 {% block content %}
+<div class="container">
+    <article class="article">
+        <header class="article-header">
+            <h1 class="article-title">{{ page.title }}</h1>
+            <div class="article-meta">
+                {% with authors=page.authors.all %}
+                {% if authors %}
+                <p class="authors">
+                    {% for author in authors %}
+                    <span class="author">{{ author.name }}</span>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    <time class="date">{{ page.first_published_at|date:"d.m.Y" }}</time>
+                </p>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </header>
 
-{% with authors=page.authors.all %}
-    {% if authors %}
-        <p class="authors">
-            Авторы:
-            {% for author in authors %}
-                {{ author.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </p>
-    {% endif %}
-{% endwith %}
-
+        <div class="article-body">
+            {% if page.subtitle %}<p class="subtitle">{{ page.subtitle }}</p>{% endif %}
+            {% include_block page.body %}
+        </div>
+    </article>
+</div>
 {% endblock %}
