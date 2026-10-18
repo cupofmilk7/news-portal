@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block content %}
+
+{% with authors=page.authors.all %}
+    {% if authors %}
+        <p class="authors">
+            Авторы:
+            {% for author in authors %}
+                {{ author.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+{% endwith %}
+
+{% endblock %}

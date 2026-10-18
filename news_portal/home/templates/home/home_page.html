@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block content %}
+
+<div class="body-center">
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}<h2>{{ page.subtitle }}</h2>{% endif %}
+    {% if page.rtfblock %}{{ page.rtfblock|richtext }}{% endif %}
+</div>
+
+<section class="news-list">
+    <h2>Последние новости</h2>
+    <ul>
+        {% for news in latest_news %}
+            <li><a href="{% pageurl news %}">{{ news.title }}</a></li>
+        {% empty %}
+            <li>Новостей пока нет.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+{% endblock %}
