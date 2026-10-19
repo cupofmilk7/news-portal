@@ -12,10 +12,11 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = PROJECT_DIR.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
@@ -81,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "news_portal.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
@@ -91,7 +91,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -111,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
@@ -122,7 +120,6 @@ TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
@@ -157,7 +154,6 @@ STORAGES = {
 # can exceed this limit within Wagtail's page editor.
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
-
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "news_portal"
@@ -182,3 +178,13 @@ WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'tx
 
 # Maximum upload size for documents in bytes.
 WAGTAILDOCS_MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
+
+load_dotenv(BASE_DIR / '.env')
+
+# Kafka
+KAFKA_BOOTSTRAP_SERVERS = os.getenv(
+    'KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092'
+).split(',')
+
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'my-topic')
+KAFKA_GROUP_ID = os.getenv('KAFKA_GROUP_ID', 'my-group')

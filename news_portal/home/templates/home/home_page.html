@@ -6,21 +6,30 @@
     <section class="hero">
         <h1>{{ page.title }}</h1>
         {% if page.subtitle %}<p class="subtitle">{{ page.subtitle }}</p>{% endif %}
-        {% if page.rtfblock %}<div class="intro">{{ page.rtfblock|richtext }}</div>{% endif %}
+        {% if weather %}
+        <section class="weather-widget" aria-label="Погода">
+            <span class="weather-widget__label">Погода сейчас: <span class="weather-widget__temp">{{ weather.temperature }}°</span></span>
+
+            <div class="weather-widget__details">
+                <span>Влажность: <b>{{ weather.humidity }}%</b></span>
+                <span>Ветер: <b>{{ weather.wind_speed }} км/ч</b></span>
+            </div>
+        </section>
+        {% endif %}
     </section>
 
     <section class="news-section">
         <h2>Последние новости</h2>
         <ul class="news-list">
             {% for news in latest_news %}
-                <li>
-                    <a href="{% pageurl news %}">
-                        <span class="news-title">{{ news.title }}</span>
-                        <time class="news-date">{{ news.first_published_at|date:"d.m.Y" }}</time>
-                    </a>
-                </li>
+            <li>
+                <a href="{% pageurl news %}">
+                    <span class="news-title">{{ news.title }}</span>
+                    <time class="news-date">{{ news.first_published_at|date:"d.m.Y" }}</time>
+                </a>
+            </li>
             {% empty %}
-                <li class="empty">Новостей пока нет.</li>
+            <li class="empty">Новостей пока нет.</li>
             {% endfor %}
         </ul>
     </section>

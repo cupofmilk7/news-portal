@@ -7,6 +7,7 @@ from wagtail.models import Page
 from modelcluster.fields import ParentalManyToManyField
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from .weather import get_current_weather
 
 from wagtail.snippets.models import register_snippet
 
@@ -52,6 +53,7 @@ class AuthorPage(Page):
         FieldPanel('author'),
         FieldPanel('full_bio'),
     ]
+
 
 class AuthorsPage(Page):
     parent_page_types = ['home.HomePage']
@@ -151,6 +153,14 @@ class HomePage(Page):
             .child_of(self)
             .order_by('-first_published_at')[:3]
         )
+
+        weather = get_current_weather(50, 40)
+        if weather:
+            context['weather'] = {
+                'temperature': round(weather.get('temperature_2m', 0)),
+                'humidity': weather.get('relative_humidity_2m'),
+                'wind_speed': weather.get('wind_speed_10m')
+            }
         return context
 
     # db

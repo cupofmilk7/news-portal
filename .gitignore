@@ -21,6 +21,7 @@ static/
 # Docker (если не нужны в Git)
 Dockerfile
 .dockerignore
+docker-compose.yml
 
 # macOS
 .DS_Store
