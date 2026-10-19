@@ -32,7 +32,7 @@ class Author(models.Model):
 
 
 class AuthorPage(Page):
-    parent_page_types = ['home.HomePage']
+    parent_page_types = ['home.AuthorsPage']
     subpage_types = []
 
     is_creatable = False
@@ -53,10 +53,18 @@ class AuthorPage(Page):
         FieldPanel('full_bio'),
     ]
 
+class AuthorsPage(Page):
+    parent_page_types = ['home.HomePage']
+    child_pages = ['home.AuthorPage']
+
+    max_count = 1
+
+    content_panels = Page.content_panels
+
 
 @receiver(post_save, sender=Author)
 def sync_author_page(sender, instance, created, **kwargs):
-    home = HomePage.objects.first()
+    home = AuthorsPage.objects.first()
     if not home:
         return
 
@@ -131,7 +139,7 @@ class NewsPage(Page):
 
 
 class HomePage(Page):
-    subpage_types = ['home.NewsPage']
+    subpage_types = ['home.NewsPage', 'home.AuthorsPage']
 
     max_count = 1
 
