@@ -5,6 +5,8 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 from modelcluster.fields import ParentalManyToManyField
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 from wagtail.snippets.models import register_snippet
 
@@ -27,6 +29,65 @@ class Author(models.Model):
     class Meta:
         verbose_name = "Автор"
         verbose_name_plural = "Авторы"
+
+
+class AuthorPage(Page):
+    parent_page_types = ['home.HomePage']
+    subpage_types = []
+
+    is_creatable = False
+
+    author = models.OneToOneField(
+        Author,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='author_page',
+        verbose_name='Автор',
+    )
+
+    full_bio = RichTextField(blank=True, verbose_name='Полная биография')
+
+    content_panels = Page.content_panels + [
+        FieldPanel('author'),
+        FieldPanel('full_bio'),
+    ]
+
+
+@receiver(post_save, sender=Author)
+def sync_author_page(sender, instance, created, **kwargs):
+    home = HomePage.objects.first()
+    if not home:
+        return
+
+    try:
+        page = instance.author_page
+    except AuthorPage.DoesNotExist:
+        page = None
+
+    if created and page is None:
+        page = AuthorPage(
+            title=instance.name,
+            slug=f"author-{instance.id}",
+            author=instance,
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return
+
+    if page is None:
+        page = AuthorPage(
+            title=instance.name,
+            slug=f"author-{instance.id}",
+            author=instance,
+        )
+        home.add_child(instance=page)
+        page.save_revision().publish()
+        return
+
+    if page.title != instance.name:
+        page.title = instance.name
+        page.save_revision().publish()
 
 
 class NewsPage(Page):

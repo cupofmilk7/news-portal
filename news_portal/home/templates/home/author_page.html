@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="container">
+    <article class="author-page">
+        <header class="article-header">
+            <h1 class="article-title">{{ page.title }}</h1>
+            {% if page.author.email %}
+            <div class="article-meta">
+                <p><a href="mailto:{{ page.author.email }}">{{ page.author.email }}</a></p>
+            </div>
+            {% endif %}
+        </header>
+
+        <div class="article-body author-bio">
+            {% if page.full_bio %}
+            {{ page.full_bio|richtext }}
+            {% elif page.author.bio %}
+            <p>{{ page.author.bio }}</p>
+            {% endif %}
+        </div>
+
+        {% with news=page.author.news_pages.all %}
+        {% if news %}
+        <section class="news-section">
+            <h2>Новости автора</h2>
+            <ul class="news-list">
+                {% for item in news %}
+                <li>
+                    <a href="{% pageurl item %}">
+                        <span class="news-title">{{ item.title }}</span>
+                        <time class="news-date">{{ item.first_published_at|date:"d.m.Y" }}</time>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+        {% endwith %}
+    </article>
+</div>
+{% endblock %}
